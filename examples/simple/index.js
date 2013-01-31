@@ -1,5 +1,5 @@
 var $         = require("jquery-browserify")
-  , rle       = require("../../src/index.js");
+  , rle       = require("rle-core");
 
 $(document).ready(function() {
 
@@ -7,7 +7,6 @@ $(document).ready(function() {
   var viewer = require("gl-shells").makeViewer();
   
   //Create a volume
-  
   function sphere_dist(x) {
     return Math.sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]) - 5.0;
   }
@@ -18,6 +17,7 @@ $(document).ready(function() {
     }
     return 0;
   }, sphere_dist);
-  viewer.updateMesh(rle.surface(volume));
+  
+  viewer.updateMesh(require("../../index.js")(volume));
   
 });

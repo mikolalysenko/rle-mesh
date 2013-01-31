@@ -1,0 +1,32 @@
+{
+  "name": "rle-mesh",
+  "version": "0.0.0",
+  "description": "Meshing routines for narrowband levelsets",
+  "main": "index.js",
+  "directories": {
+    "example": "examples"
+  },
+  "dependencies": {
+    "rle-core": "~0.0.3",
+    "rle-stencils": "~0.0.1"
+  },
+  "devDependencies": {
+    "gl-shells": "~0.0.2",
+    "jquery-browserify": "~1.8.1"
+  },
+  "scripts": {
+    "test": "node test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mikolalysenko/rle-mesh.git"
+  },
+  "keywords": [
+    "rle",
+    "mesh"
+  ],
+  "author": "Mikola Lysenko",
+  "license": "BSD",
+  "gitHead": "cdfdc2704d799f4d77908f0037f4707b278e4a44",
+  "readmeFilename": "README.md"
+}
