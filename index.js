@@ -11,31 +11,20 @@ var NEGATIVE_INFINITY     = rle.NEGATIVE_INFINITY
   , compareCoord          = rle.compareCoord
   , beginStencil          = rle.beginStencil;
 
-//A table of cube edges
-var CUBE_EDGES = [
-      [6, 7, 0]
-    , [5, 7, 1]
-    , [3, 7, 2]
-    , [0, 1, 0]
-    , [0, 2, 1]
-    , [0, 4, 2]
-    , [1, 3, 1]
-    , [1, 5, 2]
-    , [2, 3, 0]
-    , [2, 6, 2]
-    , [4, 5, 0]
-    , [4, 6, 1]
-  ];
+var CUBE_EDGE0 = new Int32Array([ 6, 5, 3, 0, 0, 0, 1, 1, 2, 2, 4, 4 ]);
+var CUBE_EDGE1 = new Int32Array([ 7, 7, 7, 1, 2, 4, 3, 5, 3, 6, 5, 6 ]);
+var CUBE_EDGED = new Int32Array([ 0, 1, 2, 0, 1, 2, 1, 2, 0, 2, 0, 1 ]);
 
 //List of 12-bit masks describing edge crossings
-var EDGE_TABLE = new Int32Array(256);
+var EDGE_TABLE = new Int16Array(256);
 (function() {
   //Precalculate edge crossings
   for(var mask=0; mask<256; ++mask) {
     var e_mask = 0;
     for(var i=0; i<12; ++i) {
-      var e = CUBE_EDGES[i];
-      if(!(mask & (1<<e[0])) !== !(mask & (1<<e[1]))) {
+      var e0 = CUBE_EDGE0[i]
+        , e1 = CUBE_EDGE1[i];
+      if(!(mask & (1<<e0)) !== !(mask & (1<<e1))) {
         e_mask |= (1<<i);
       }
       EDGE_TABLE[mask] = e_mask;
@@ -73,9 +62,7 @@ module.exports = function(volume, lo_, hi_, solid_func) {
     , vphases     = volume.phases
     , cdistances  = new Float64Array(8)   //Distances at iterator
     , cphases     = new Int32Array(8)     //Phases at iterator
-    , v_ptr       = new Int32Array(8)     //Vertex pointers
-    , nc          = new Int32Array(3)
-    , nd          = new Int32Array(3);
+    , v_ptr       = new Int32Array(8);
   //Get initial iterator
   var iter = beginStencil(volume, CUBE_STENCIL);
   iter.seek(lo);
@@ -110,15 +97,15 @@ main_loop:
     var crossings = EDGE_TABLE[mask]
       , centroid  = [0,0,0]
       , count     = 0;
-    for(var i=0; i<12; ++i) {
+    for(var i=0; i < 12; ++i) {
       if((crossings & (1<<i)) === 0) {
         continue;
       }
-      var edge  = CUBE_EDGES[i]
-        , eu    = edge[0]
+      var eu    = CUBE_EDGE0[i]
+        , ev    = CUBE_EDGE1[i]
+        , d     = CUBE_EDGED[i]
         , u     = cdistances[eu]
-        , v     = cdistances[edge[1]]
-        , d     = edge[2];
+        , v     = cdistances[ev];
       for(var j=0; j<3; ++j) {
         if(eu & (1<<j)) {
           centroid[j] -= 1.0-EPSILON;
@@ -138,15 +125,16 @@ main_loop:
 outer_loop:
     for(var i=0; i<8; ++i) {
       while(true) {
-        if(v_ptr[i] >= positions.length -1) {
+        if(v_ptr[i] >= positions.length-1) {
           continue outer_loop;
         }
         var p = positions[v_ptr[i]+1];
-        for(var j=0; j<3; ++j) {
-          nc[j] = coord[j] - ((i&(1<<j)) ? 1 : 0);
-          nd[j] = Math.ceil(p[j]);
+        for(var j=2; j>=0; --j) {
+          var s = coord[j] - ((i&(1<<j)) ? 1 : 0) - Math.ceil(p[j])|0;
+          if(s) {
+            break;
+          }
         }
-        var s = compareCoord(nd, nc);
         if(s <=0) {
           ++v_ptr[i];
         }
