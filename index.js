@@ -130,7 +130,7 @@ outer_loop:
         }
         var p = positions[v_ptr[i]+1];
         for(var j=2; j>=0; --j) {
-          var s = coord[j] - ((i&(1<<j)) ? 1 : 0) - Math.ceil(p[j])|0;
+          var s = (Math.ceil(p[j])|0) - coord[j] + ((i&(1<<j)) ? 1 : 0);
           if(s) {
             break;
           }
