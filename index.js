@@ -28,7 +28,7 @@ var CUBE_EDGES = [
   ];
 
 //List of 12-bit masks describing edge crossings
-var EDGE_TABLE = new Array(256);
+var EDGE_TABLE = new Int32Array(256);
 (function() {
   //Precalculate edge crossings
   for(var mask=0; mask<256; ++mask) {
@@ -47,13 +47,20 @@ var EDGE_TABLE = new Array(256);
 var DEFAULT_SOLID_FUNC = new Function("phase", "return !!phase;");
 
 //Extracts a surface from the volume using elastic surface nets
-module.exports = function(volume, lo, hi, solid_func) {
+module.exports = function(volume, lo_, hi_, solid_func) {
   //Handle missing parameters
-  if(!lo) {
-    lo = [NEGATIVE_INFINITY, NEGATIVE_INFINITY, NEGATIVE_INFINITY];
+  var lo, hi;
+  if(!lo_) {
+    lo = new Int32Array(3);
+    lo[0] = lo[1] = lo[2] = NEGATIVE_INFINITY;
+  } else {
+    lo = new Int32Array(lo_);
   }
-  if(!hi) {
-    hi = [POSITIVE_INFINITY, POSITIVE_INFINITY, POSITIVE_INFINITY];
+  if(!hi_) {
+    hi = new Int32Array(3);
+    hi[0] = hi[1] = hi[2] = POSITIVE_INFINITY;
+  } else {
+    hi = new Int32Array(hi_);
   }
   if(!solid_func) {
     solid_func = DEFAULT_SOLID_FUNC;
@@ -64,10 +71,11 @@ module.exports = function(volume, lo, hi, solid_func) {
     , phases      = []
     , vdistances  = volume.distances
     , vphases     = volume.phases
-    , vals        = [0,0,0,0,0,0,0,0]
-    , v_ptr       = [0,0,0,0,0,0,0,0]
-    , nc          = [0,0,0]
-    , nd          = [0,0,0];
+    , cdistances  = new Float64Array(8)   //Distances at iterator
+    , cphases     = new Int32Array(8)     //Phases at iterator
+    , v_ptr       = new Int32Array(8)     //Vertex pointers
+    , nc          = new Int32Array(3)
+    , nd          = new Int32Array(3);
   //Get initial iterator
   var iter = beginStencil(volume, CUBE_STENCIL);
   iter.seek(lo);
@@ -75,21 +83,25 @@ main_loop:
   for(; iter.hasNext(); iter.next()) {
     //Skip coordinates outside range
     var coord = iter.coord;
+    //Exit if we are out of bounds
+    if(compareCoord(hi, coord) <= 0) {
+      break;
+    }
+    //Skip coordinates outside bounds
     for(var i=0; i<3; ++i) {
       if(coord[i] < lo[i] || coord[i] >= hi[i]) {
         continue main_loop;
       }
     }
-    //Exit if we are out of bounds
-    if(compareCoord(hi, coord) <= 0) {
-      break;
-    }
-    //Read in values and mask
+    //Read in values and compute mask
     var ptrs = iter.ptrs
       , mask = 0;
     for(var i=0; i<8; ++i) {
-      vals[i] = vdistances[ptrs[i]];
-      mask   |= solid_func(vphases[ptrs[i]]) ? 0 : (1 << i);
+      var ptr       = ptrs[i];
+      cdistances[i] = vdistances[ptr];
+      var phase     = vphases[ptr];
+      cphases[i]    = ptr;
+      mask         |= solid_func(vphases[ptrs[i]]) ? 0 : (1 << i);
     }
     if(mask === 0 || mask === 0xff) {
       continue;
@@ -102,11 +114,11 @@ main_loop:
       if((crossings & (1<<i)) === 0) {
         continue;
       }
-      var edge = CUBE_EDGES[i]
-        , eu  = edge[0]
-        , u   = vals[eu]
-        , v   = vals[edge[1]]
-        , d   = edge[2];
+      var edge  = CUBE_EDGES[i]
+        , eu    = edge[0]
+        , u     = cdistances[eu]
+        , v     = cdistances[edge[1]]
+        , d     = edge[2];
       for(var j=0; j<3; ++j) {
         if(eu & (1<<j)) {
           centroid[j] -= 1.0-EPSILON;
@@ -116,8 +128,7 @@ main_loop:
       ++count;
     }
     //Compute vertex
-    var coord   = iter.coord
-      , weight  = 1.0 / count;
+    var weight  = 1.0 / count;
     for(var i=0; i<3; ++i) {
       centroid[i] = coord[i] + centroid[i] * weight;
     }
@@ -151,12 +162,12 @@ outer_loop:
       }
     }
     //Add faces
-    var phase0 = vphases[ptrs[7]];
+    var phase0 = cphases[7];
     for(var i=0; i<3; ++i) {
       if(!(crossings & (1<<i))) {
         continue;
       }
-      var phase1 = vphases[ptrs[7^(1<<i)]]
+      var phase1 = cphases[7^(1<<i)]
         , iu = 1<<((i+1)%3)
         , iv = 1<<((i+2)%3);
       if(mask & 128) {
