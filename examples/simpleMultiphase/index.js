@@ -1,6 +1,6 @@
 var $         = require("jquery-browserify")
-  , rle       = require("../../src/index.js");
-
+  , core      = require("rle-core")
+  , surface    = require("../../index.js");
 
 var COLORS = [
   [0,0,1],
@@ -17,7 +17,7 @@ $(document).ready(function() {
   function sphere_dist(x) {
     return Math.sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]) - 5.0;
   }
-  var volume = rle.sample([-6,-6,-6], [7,7,7], function(x) {
+  var volume = core.sample([-6,-6,-6], [7,7,7], function(x) {
     if(sphere_dist(x) < 0) {
       if(x[0] < 0) {
         return 1;
@@ -28,7 +28,7 @@ $(document).ready(function() {
   }, sphere_dist);
   
   //Generate mesh
-  var mesh = rle.surface(volume);
+  var mesh = surface(volume);
   
   //Color faces based on phase
   var colors = new Array(mesh.positions.length);

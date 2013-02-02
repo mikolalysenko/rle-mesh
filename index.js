@@ -87,7 +87,7 @@ main_loop:
       var ptr       = ptrs[i];
       cdistances[i] = vdistances[ptr];
       var phase     = vphases[ptr];
-      cphases[i]    = ptr;
+      cphases[i]    = phase;
       mask         |= solid_func(vphases[ptrs[i]]) ? 0 : (1 << i);
     }
     if(mask === 0 || mask === 0xff) {
