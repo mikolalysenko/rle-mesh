@@ -10,7 +10,6 @@ $(document).ready(function() {
   function sphere_dist(x) {
     return Math.sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]) - 5.0;
   }
-  
   var volume = rle.sample([-6,-6,-6], [7,7,7], function(x) {
     if(sphere_dist(x) < 0) {
       return 1;
