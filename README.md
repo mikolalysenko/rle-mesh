@@ -19,7 +19,7 @@ Here is how you can create a mesh for a solid object:
 
 This creates a mesh that looks like this:
 
-![](images/solid.png)
+![](https://raw.github.com/mikolalysenko/rle-mesh/master/images/solid.png)
 
 [You can also view the demo in your browser here](http://mikolalysenko.github.com/rle-mesh/examples/simple/www/index.html)
 
@@ -41,7 +41,7 @@ rle-mesh can also handle multiphase level sets too.  Here is a more complicated 
 
 This creates a sphere with two distinct phases:
 
-![](images/multi.png)
+![](https://raw.github.com/mikolalysenko/rle-mesh/master/images/multi.png)
 
 [Again, you can also look at the result in 3D using your web browser.](http://mikolalysenko.github.com/rle-mesh/examples/simpleMultiphase/www/index.html)
 
