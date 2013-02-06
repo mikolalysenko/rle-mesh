@@ -2,23 +2,42 @@ rle-mesh
 ========
 Mesh and surface extraction routines for narrow band level sets.
 
-Usage
-=====
-Just call module.exports to pull out a mesh from the volume
+Example
+=======
+Here is how you can create a mesh for a solid object:
 
-    //Create a volume
+    var volume = require("rle-core").sampleSolid([-6,-6,-6], [7,7,7], function(x) {
+      return Math.sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]) - 5.0;
+    });
+    var mesh = require("rle-mesh")(volume);
+
+This creates a mesh that looks like this:
+
+![](images/solid.png)
+
+[You can also view the demo in your browser here](http://mikolalysenko.github.com/rle-mesh/examples/simple/www/index.html)
+
+rle-mesh can also handle multiphase level sets too.  Here is a more complicated example:
+
     function sphere_dist(x) {
       return Math.sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]) - 5.0;
     }
-    var volume = require("rle-core").sample([-6,-6,-6], [7,7,7], function(x) {
+    var volume = core.sample([-6,-6,-6], [7,7,7], function(x) {
       if(sphere_dist(x) < 0) {
-        return 1;
+        if(x[0] < 0) {
+          return 1;
+        }
+        return 2;
       }
       return 0;
     }, sphere_dist);
-    
-    //Create the mesh
-    var mesh = require("rle-mesh")(volume);
+    var mesh = surface(volume);
+
+This creates a sphere with two distinct phases:
+
+![](images/multi.png)
+
+[Again, you can also look at the result in 3D using your web browser.](http://mikolalysenko.github.com/rle-mesh/examples/simpleMultiphase/www/index.html)
 
 Installation
 ============
