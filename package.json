@@ -1,6 +1,6 @@
 {
   "name": "rle-mesh",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Meshing routines for narrowband levelsets",
   "main": "index.js",
   "directories": {
