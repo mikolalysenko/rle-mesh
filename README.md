@@ -2,6 +2,12 @@ rle-mesh
 ========
 Mesh and surface extraction routines for narrow band level sets.
 
+Installation
+============
+Via npm:
+
+    npm install rle-mesh
+
 Example
 =======
 Here is how you can create a mesh for a solid object:
@@ -38,12 +44,6 @@ This creates a sphere with two distinct phases:
 ![](images/multi.png)
 
 [Again, you can also look at the result in 3D using your web browser.](http://mikolalysenko.github.com/rle-mesh/examples/simpleMultiphase/www/index.html)
-
-Installation
-============
-Via npm:
-
-    npm install rle-mesh
 
 `require("rle-mesh")(volume[, lo, hi, solid_func])`
 ===================================================
