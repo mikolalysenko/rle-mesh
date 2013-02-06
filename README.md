@@ -1,6 +1,6 @@
 rle-mesh
 ========
-Mesh and surface extraction routines for narrow band level sets.
+Mesh and surface extraction routines for narrow band level sets.  It is part of the [rle family of modules](https://github.com/mikolalysenko/rle-csg).
 
 Installation
 ============
