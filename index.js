@@ -173,7 +173,7 @@ outer_loop:
   }
   return {
     positions:  positions,
-    faces:      faces,
+    cells:      faces,
     phases:     phases
   };
 }
