@@ -1,14 +1,14 @@
 {
   "name": "rle-mesh",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Meshing routines for narrowband levelsets",
   "main": "index.js",
   "directories": {
     "example": "examples"
   },
   "dependencies": {
-    "rle-core": "0.0.*",
-    "rle-stencils": "0.0.*"
+    "rle-core": "~0.0",
+    "rle-stencils": "~0.0"
   },
   "devDependencies": {
     "gl-shells": "~0.0.2",
