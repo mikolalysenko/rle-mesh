@@ -1,5 +1,4 @@
 var $         = require("jquery-browserify")
-  , core      = require("rle-core")
   , surface    = require("../../index.js");
 
 var COLORS = [
@@ -17,7 +16,7 @@ $(document).ready(function() {
   function sphere_dist(x) {
     return Math.sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]) - 5.0;
   }
-  var volume = core.sample([-6,-6,-6], [7,7,7], function(x) {
+  var volume = require("rle-sample").dense([-6,-6,-6], [7,7,7], function(x) {
     if(sphere_dist(x) < 0) {
       if(x[0] < 0) {
         return 1;

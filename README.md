@@ -1,6 +1,6 @@
 rle-mesh
 ========
-Mesh and surface extraction routines for narrow band level sets.  It is part of the [rle family of modules](https://github.com/mikolalysenko/rle-all).
+Mesh and surface extraction routines for narrow band level sets.  It is part of the [rle family of modules](https://github.com/mikolalysenko/rle-core).
 
 Installation
 ============
@@ -12,14 +12,14 @@ Example
 =======
 Here is how you can create a mesh for a solid object:
 
-    var volume = require("rle-core").sampleSolid([-6,-6,-6], [7,7,7], function(x) {
+    var volume = require("rle-sample").solid.dense([-6,-6,-6], [7,7,7], function(x) {
       return Math.sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]) - 5.0;
     });
     var mesh = require("rle-mesh")(volume);
 
 This creates a mesh that looks like this:
 
-![](https://raw.github.com/mikolalysenko/rle-mesh/master/images/solid.png)
+<img src="https://raw.github.com/mikolalysenko/rle-mesh/master/images/solid.png" width=40%>
 
 [You can also view the demo in your browser here](http://mikolalysenko.github.com/rle-mesh/examples/simple/www/index.html)
 
@@ -28,7 +28,7 @@ rle-mesh can also handle multiphase level sets too.  Here is a more complicated 
     function sphere_dist(x) {
       return Math.sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]) - 5.0;
     }
-    var volume = core.sample([-6,-6,-6], [7,7,7], function(x) {
+    var volume = require("rle-sample").dense([-6,-6,-6], [7,7,7], function(x) {
       if(sphere_dist(x) < 0) {
         if(x[0] < 0) {
           return 1;
@@ -37,7 +37,7 @@ rle-mesh can also handle multiphase level sets too.  Here is a more complicated 
       }
       return 0;
     }, sphere_dist);
-    var mesh = surface(volume);
+    var mesh = require("rle-mesh")(volume);
 
 This creates a sphere with two distinct phases:
 
@@ -62,4 +62,3 @@ Returns: An object with the following properties
 Credits
 =======
 (c) 2013 Mikola Lysenko
-
