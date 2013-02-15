@@ -36,7 +36,7 @@ var EDGE_TABLE = new Int16Array(256);
 var DEFAULT_SOLID_FUNC = new Function("phase", "return !!phase;");
 
 //Extracts a surface from the volume using elastic surface nets
-module.exports = function(volume, lo_, hi_, solid_func) {
+function createNarrowbandMesh(volume, lo_, hi_, solid_func) {
   //Handle missing parameters
   var lo, hi;
   if(!lo_) {
@@ -177,3 +177,4 @@ outer_loop:
     phases:     phases
   };
 }
+module.exports = createNarrowbandMesh;
