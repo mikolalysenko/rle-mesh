@@ -42,13 +42,13 @@ function createNarrowbandMesh(volume, lo_, hi_, solid_func) {
   if(!lo_) {
     lo = new Int32Array(3);
     lo[0] = lo[1] = lo[2] = NEGATIVE_INFINITY;
-  } else {
+  } else if(!(lo instanceof Int32Array)) {
     lo = new Int32Array(lo_);
   }
   if(!hi_) {
     hi = new Int32Array(3);
     hi[0] = hi[1] = hi[2] = POSITIVE_INFINITY;
-  } else {
+  } else if(!(hi instanceof Int32Array)) {
     hi = new Int32Array(hi_);
   }
   if(!solid_func) {
